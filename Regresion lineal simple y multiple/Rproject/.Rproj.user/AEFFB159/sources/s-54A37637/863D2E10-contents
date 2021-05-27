@@ -1,0 +1,118 @@
+---
+title: "Regression Models Course Project"
+author: "Yaniela Fernandez M."
+date: "31/08/2020"
+output:
+  pdf_document: default
+  fig_caption: yes
+---
+
+## Executive Summary
+
+This report examines the mtcars dataset and explore how miles per gallon (MPG) is affected by different variables. In particularly,the following questions are answered: 1) Is an automatic or manual transmission better for MPG, and 2) Quantify the MPG difference between automatic and manual transmissions.
+
+Summarizing the findings, it was observed that manual transmissions on average do give 0.13 miles per gallon more than automatic transmission,taking into account the confounding variables weight and cylinders
+
+
+## Exploratory Data Analysis
+
+The mtcars dataset  has 32 observations of 11 variables. Was extracted from the 1974 Motor Trend US magazine, which comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-74 models).
+
+```{r echo=FALSE , results='hide'}
+library (datasets)
+data(mtcars)
+head(mtcars)
+attach(mtcars)
+```
+
+```{r echo=FALSE}
+
+vs <- factor(vs)
+cyl <- factor(cyl)
+gear <- factor(gear)
+carb <- factor(carb)
+am <- factor(am, labels=c("Automatic","Manual"))
+```
+
+After perform the necessary data transformations by factoring some variables, it will do a quick analysis on the variables to gain some insight on the distribution of mpg and the two modes of transmission. 
+
+Figure \ref{fig:fig1}  shows that automatic cars have a worst MPG ratio than manual ones. On average, a manual car will achieve 23 mpg, versus 17 mpg for automatics.
+
+## Regression Analysis
+
+In this section, linear regression models based on different variables are built, an attempt is made to find the best fit of the model, it is compared with the base model we have using anova. After model selection, residual analysis is performed.
+
+For the first model it will be use **mpg** as dependent variable and **am** as  independent variable.
+
+```{r echo=FALSE}
+
+fitSimple <- lm(mpg ~ am)
+summary(fitSimple)
+
+```
+
+This shows that the intercept is the average MPG for automatic cars, which is 17.1 MPG, while the slope is the increase of the intercept at 7.23 MPG for manual ones. Despite the fact that the model only explains a 36% of the variance of MPG because the R-squared value is 0.36, in this model, the predictors are statistically significants.
+
+Let’s perform an Analysis of Variance for all the data:
+
+
+```{r echo=FALSE}
+varAnalysis <- aov(mpg ~ ., data = mtcars)
+summary(varAnalysis)
+
+```
+
+The previous analysis shows that there are variables with p-values less than .5. This allows to put in the model the variables cyl, disp and wt, in addition to the type of transmission (am)
+
+
+```{r echo=FALSE}
+fitMultivar <- lm(mpg ~ am + cyl + disp + wt, data = mtcars)
+summary(fitMultivar)
+
+```
+
+In the output below is observed that R-squared value is over 0.83, suggesting that 83% or more of variance can be explained by the multivariable model. The intercept is increased in 26.8 units respect to the first model. Thus, we can say that the difference between automatic and manual transmissions is **0.13 MPG**.
+
+It can see that the predictor variables of **cyl** and **wt**  are significant. Changes in those predictor's value are related to changes in MPG. For every aditional weight the average of MPG is decreased in 3.58 units, while holding constant other variables in the model. 
+
+```{r echo=FALSE, results='hide'}
+fitMultivar$coefficients[2]-fitMultivar$coefficients[5]
+fitMultivar$coefficients[2]-fitMultivar$coefficients[3]
+
+```
+
+However, it can be said that the effect of manual transmission on MPG is approximately 3.71 and 1.98 units higher than that of the Weight variable (**wt**) and the Number of cylinders variable (**cyl**) respectively.  
+
+## Residual and diagnostic 
+
+In order to validate the model is necessary to check the residual plots in figure \ref{fig:fig2}. From those plots the following observations can be made:
+
+* In the Residuals vs. Fitted plot, the points seems to be centered on zero throughout the range of fitted values. So the residuals are consistent with random error.
+
+* Random errors are assumed to produce residuals that are normally distributed, which is observed in the Normal Q-Q plot.
+
+* In the Scale-Location plot, the vertical spread of the residuals is consistent across the range of fitted values, indicating constant variance.
+
+* There are no points outside the red dashed Cook’s distance line in the Residuals vs Leverage plot. 
+
+## Conclusions
+
+Based on the observations of the best-fit model, the following can be concluded:
+
+* Cars with Manual transmission get more miles per gallon compared aganist cars with Automatic transmission. (0.13 adjusted by cyl, disp, and wt). MPG is decreased in 3.58 units,(adjusted by cyl, disp and am) for every 1000 lb increase in wt.
+* MPG decreases in 1.78 with increase of cyl (adjusted by wt, disp and am).
+* The effect of manual transmission on MPG is approximately 3.71 and 1.98 units higher than that of wt and cyl respectively. 
+
+\newpage
+
+# Appendix {-}
+
+```{r fig1, echo=FALSE, fig.cap='\\label{fig:fig1}**Average of milles per galon in Automatic and Manual cars**'}
+bp<-boxplot(mpg~am)
+text(x = col(bp$stats) - .5, y = bp$stats, labels = bp$stats)
+```
+
+```{r fig2, echo=FALSE,  fig.cap='\\label{fig:fig2}**Residuals plots from the multivariable regression  model**' }
+par(mfrow = c(2, 2))
+plot(fitMultivar)
+```
