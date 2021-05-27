@@ -1,4 +1,4 @@
-# Regresion lineal simple
+# Regresion lineal simple   
 # ------------
 # 
 # x refers to the population size in 10,000s
