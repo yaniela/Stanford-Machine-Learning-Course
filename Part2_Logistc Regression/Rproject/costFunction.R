@@ -1,6 +1,5 @@
 
 source("sigmoid.R")
-######
 
 costFunction<-function(theta){
   
