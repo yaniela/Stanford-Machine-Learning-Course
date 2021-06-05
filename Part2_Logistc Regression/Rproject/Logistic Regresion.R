@@ -1,29 +1,33 @@
-
-#Logistic Regression
-# ------------
+## Machine Learning Online Class - Exercise 2: Logistic Regression
+#
 # we'll build a logistic regression model to predict whether a student gets admitted to a university. 
 # For each training example, you have the applicant's scores on two exams and the admissions decision.
 # To accomplish this, we're going to build a classification model that estimates the probability of 
 # admission based on the exam scores.
 # 
 # 
+
+## Initialization
+
 library(ggplot2)
 
-
-# ======================= Part 1:Cargar datos =======================
+# ======================= Part 1:Load Data =======================
 
 data= read.table(file = "ex2data1.txt",sep = ",",dec = ".")
 names(data)=c("Exam1", "Exam2", "Admited")
 head(data)
 
+summary(data)
+data$Admited=as.character(data$Admited)
+
 # =============== Part 2:Graficar datos ====================
 
-summary(data)
-
-data$Admited=as.character(data$Admited)
+cat(sprintf('Plotting data with + indicating (y = 1) examples and o indicating (y = 0) examples.\n'))
 
 ggplot(data, aes(x=Exam1, y=Exam2, color=factor(Admited, labels=c("No","Yes")))) + 
   geom_point(size=3)+ labs(color = "Admited")
+
+cat(sprintf('\nProgram paused. Press enter to continue.\n'))
 
 #=============== check to make sure the sigmoid function is working. ====================
 
@@ -43,7 +47,7 @@ X[,1]=1
 
 source("costFunction.R")
 
-costFunction(theta) #You should see that the cost is about 0.693.
+cost<-costFunction(theta) #You should see that the cost is about 0.693.
 
 
 # We do not use the gradient descendent algorthim to calculate the coeff, instead 
@@ -55,46 +59,36 @@ theta_optim <- optim(par=theta,fn=costFunction)
 theta <- theta_optim$par
 
 #cost at optimal value of the theta
-theta_optim$value
 
-# Prediccion> or  a  student  with  an  Exam  1  scoreof  45  and  an  Exam  2  score  of  85, 
+
+# Print theta to screen
+cat(sprintf('Cost at theta found by optim: %f\n', theta_optim$value))
+cat(sprintf('theta: \n'))
+cat(sprintf(' %f \n', theta))
+
+
+# Prediction of  a  student  with  an  Exam  1  scoreof  45  and  an  Exam  2  score  of  85, 
 #you  should  expect  to  see  an  admission probability of 0.776
 
 
 vect=c(1,45, 85 )
-predicc=sigmoid(vect%*%theta)
-predicc   # I obtain 0.7763541 probability of been Admited
+prob=sigmoid(vect%*%theta)
 
-#========= the gradient descendent algorthim to calculate the coeff==============
-
-source("gradienteDescendentLogisticReg.R")
-
-theta= as.matrix(numeric(ncol(data)))
-
-iters=400
-alpha=0.00001
-
-result<-gradienteDescendentLogisticReg(X, y, theta, iters, alpha)
-
-vect=c(1,45, 85 )
-predicc=sigmoid(vect%*%result[1:3])
-predicc       # I obtain 0.6565824 probability of been Admited
-
+cat(sprintf('For a student with scores 45 and 85, we predict an admission probability of\n %f\n', prob))
 
 #=============== Visualizing decision boundary ===================
 
-x = data[,1]
-y = data[,2]
-z = data[,3]
-df = data.frame(x1=x,x2=y,y=as.factor(z))
+source("plotDecisionBoundary.R")
 
-plot_x = c(1:100);
+plotDecisionBoundary(X,y, theta)
 
-plot_y = (-1/theta[3])*(theta[2]*plot_x + theta[1])
+#========== Compute accuracy on our training set=============
 
-ggplot(df, aes(x=x1, y=x2, color=factor(y, labels=c("No","Yes")))) +  labs(color = "Admited") +
-  geom_point(size=2) +  geom_line(color='red', aes(x=plot_x, y=plot_y))
+source("predict.R")
 
+p <- predict(theta, X)
+
+cat(sprintf('Train Accuracy: %f\n', mean(p == y) * 100))
 
 
 

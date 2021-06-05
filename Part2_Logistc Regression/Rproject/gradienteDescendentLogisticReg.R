@@ -1,4 +1,6 @@
+
 source("costFunction.R")
+
 gradienteDescendentLogisticReg<-function (X, y, theta, iters, alpha){
   
   m = length(y); # number of training examples
