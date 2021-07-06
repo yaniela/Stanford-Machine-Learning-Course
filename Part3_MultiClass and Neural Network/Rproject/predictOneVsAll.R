@@ -7,8 +7,8 @@ predictOneVsAll  <- function(all_theta, X) {
   m <- dim(X)[1]
   num_labels <- dim(all_theta)[1]
   
-  # You need to return the following variables correctly
-  p <- rep(0,dim(X)[1])
+  # Initializing the return variable
+    p <- rep(0,dim(X)[1])
   
   # Add ones to the X data matrix
   X <- cbind(rep(1,m), X)

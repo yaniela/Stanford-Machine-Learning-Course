@@ -26,7 +26,7 @@ rm(data)
 
 m <- dim(X)[1]
 
-# Randomly select 100 data points to display
+# Randomly select 100 images to display
 rand_indices <- sample(m)
 sel <- X[rand_indices[1:100], ]
 
