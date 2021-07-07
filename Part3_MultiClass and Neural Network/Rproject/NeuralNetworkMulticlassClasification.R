@@ -66,14 +66,6 @@ for (i in 1:m){
   pred <- predict(Theta1, Theta2, X[rp[i],])
   cat(sprintf('\nNeural Network Prediction: %d (y %d) (digit %d)\n', pred ,y[rp[i]],pred%%10))
   
-  # line <- readLines(con = stdin(),1)
-  #cat(sprintf('Program paused. Press enter to continue.\n'))
-  #line <- readLines(con = stdin(),1)
-  
-  # line <- readLines(con = stdin(),1)
-  #cat(sprintf('Program paused. Press enter to continue.\n'))
-  #line <- readLines(con = stdin(),1)
-  
   Sys.sleep(2)
   #press esc to quit the loop in Rstudio
 }
