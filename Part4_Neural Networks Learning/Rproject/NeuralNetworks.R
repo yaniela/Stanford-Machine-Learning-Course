@@ -5,7 +5,7 @@
 ## Initialization
 rm(list=ls())
 sources <- c("checkNNGradients.R", "debugInitializeWeights.R","displayData.R","sigmoid.R","nnCostFunction.R",
-             "sigmoidGradient.R", "randInitializeWeights.R", "computeNumericalGradient.R","lbfgsb3_.R")
+             "sigmoidGradient.R", "randInitializeWeights.R", "computeNumericalGradient.R")
 
 for (i in 1:length(sources)) {
   cat(paste("Loading ",sources[i],"\n"))
